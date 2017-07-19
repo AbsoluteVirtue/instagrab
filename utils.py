@@ -1,5 +1,6 @@
 import requests
 import arrow
+import pathlib
 
 import resources
 import bs4_impl as parser
@@ -69,11 +70,16 @@ def dl_image(url, username, date, timestamp):
     if not response.status_code == 200:
         return False
 
+    filepath = '%s%s'
+    dirpath = resources.default_download_dir % username
+    pathlib.Path(dirpath).mkdir(parents=True, exist_ok=True)
     with open(
-            resources.default_download_dir % resources.filename_template.format(
-                username=username,
-                date=date,
-                timestamp=timestamp
+            filepath % (
+                    dirpath, resources.filename_template.format(
+                        username=username,
+                        date=date,
+                        timestamp=timestamp
+                    )
             )
             , 'wb'
     ) as temp_file:

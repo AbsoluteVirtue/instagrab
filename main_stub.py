@@ -4,7 +4,7 @@ import utils
 
 def main():
     # uh = input("Enter user handle: ")
-    username = 'brojaq'
+    username = 'laurennmcqueen'
     source = utils.get_single_page(username)
     results = utils.parse_main_page(source)
     if results['is_private']:

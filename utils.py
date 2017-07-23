@@ -75,7 +75,8 @@ def dl_image(url, username, date, timestamp):
     pathlib.Path(dirpath).mkdir(parents=True, exist_ok=True)
     with open(
             filepath % (
-                    dirpath, resources.filename_template.format(
+                    dirpath,
+                    resources.filename_template.format(
                         username=username,
                         date=date,
                         timestamp=timestamp

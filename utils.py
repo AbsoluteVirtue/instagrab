@@ -17,7 +17,10 @@ def get_profile_main_page_deprecated(user_handle):
 
 def parse_main_page(html_source):
     profile_info = parser.get_profile_json(html_source)
-    user = _get_user(profile_info)
+    try:
+        user = _get_user(profile_info)
+    except Exception:
+        return {}
     data = {
         'is_private': user['is_private'],
         'media': user['media'],

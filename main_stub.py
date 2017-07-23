@@ -7,6 +7,10 @@ def main():
     # username = 'laurennmcqueen'
     source = utils.get_single_page(username)
     results = utils.parse_main_page(source)
+    if not results:
+        print('Profile not found')
+        return
+
     if results['is_private']:
         print('Profile is private')
         return

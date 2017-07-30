@@ -1,3 +1,4 @@
+import arrow
 
 import utils
 
@@ -17,8 +18,12 @@ def main():
     media = results['media']
 
     print('Downloading images...')
+    count = 0
     while True:
-        utils.get_images(media['nodes'], username)
+        n = utils.get_images(media['nodes'], username)
+
+        print('%s/%s' % (count, media['count']))
+        count += n
 
         max_id = media['nodes'][-1]['id']
         source = utils.get_single_page(username, max_id)

@@ -64,10 +64,15 @@ def _get_single_entries_list(nodes):
 def get_images(nodes, username):
     current_date = arrow.now()
     entries = _get_single_entries_list(nodes)
+
+    n = 0
     for entry in entries:
         result = dl_image(entry['pic'], username, current_date, entry['date'])
         if not result['success']:
             print('error DLing file')
+        n += 1
+
+    return n
 
 
 def dl_image(url, username, date, timestamp):
@@ -103,9 +108,9 @@ def _insert_exif_comment(jpg_file, date, caption):
         exif_dict['Exif'] = {
             piexif.ExifIFD.DateTimeOriginal: date.strftime("%Y:%m:%d %H:%M:%S"),
             piexif.ExifIFD.UserComment: caption.encode('utf-8'),
-            # piexif.ExifIFD.LensMake: u"LensMake",
-            # piexif.ExifIFD.Sharpness: 65535,
-            # piexif.ExifIFD.LensSpecification: ((1, 1), (1, 1), (1, 1), (1, 1)),
+            piexif.ExifIFD.LensMake: u"LensMake",
+            piexif.ExifIFD.Sharpness: 65535,
+            piexif.ExifIFD.LensSpecification: ((1, 1), (1, 1), (1, 1), (1, 1)),
         }
     try:
         exif_bytes = piexif.dump(exif_dict)
@@ -114,8 +119,7 @@ def _insert_exif_comment(jpg_file, date, caption):
         from PIL import Image
         i = Image.open(jpg_file)
         i.save(jpg_file, exif=exif_bytes)
-    except ValueError as e:
-        print(e)
+    except ValueError:
         return False
     else:
         return True

@@ -4,7 +4,6 @@ import utils
 
 def main():
     username = input("Enter user handle: ")
-    # username = 'laurennmcqueen'
     source = utils.get_single_page(username)
     results = utils.parse_main_page(source)
     if not results:

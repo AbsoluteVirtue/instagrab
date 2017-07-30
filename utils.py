@@ -74,14 +74,14 @@ def dl_image(url, username, date, timestamp):
         return False
 
     filepath = '%s%s'
-    dirpath = resources.default_download_dir % username
+    dirpath = resources.default_download_dir % (username, date)
     pathlib.Path(dirpath).mkdir(parents=True, exist_ok=True)
     with open(
             filepath % (
                     dirpath,
                     resources.filename_template.format(
                         username=username,
-                        date=date,
+                        date=_get_date_string_from_timestamp(timestamp),
                         timestamp=timestamp
                     )
             )
@@ -89,3 +89,8 @@ def dl_image(url, username, date, timestamp):
     ) as temp_file:
         temp_file.write(response.content)
         return True
+
+
+def _get_date_string_from_timestamp(timestamp):
+    r = str(arrow.get(timestamp))
+    return r.split('+')[0].replace(':', '-')

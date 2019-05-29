@@ -2,13 +2,14 @@ import requests
 import arrow
 import pathlib
 import piexif
+import uuid
 
 import resources
 import bs4_impl as parser
 
 
 def _get_user(doc):
-    return doc['entry_data']['ProfilePage'][0]['user']
+    return doc['entry_data']['ProfilePage'][0]['graphql']['user']
 
 
 def get_profile_main_page_deprecated(user_handle):
@@ -20,11 +21,12 @@ def parse_main_page(html_source):
     profile_info = parser.get_profile_json(html_source)
     try:
         user = _get_user(profile_info)
-    except Exception:
+    except Exception as ex:
+        print(ex)
         return {}
     data = {
         'is_private': user['is_private'],
-        'media': user['media'],
+        'media': user['edge_owner_to_timeline_media'],
         'profile_pic': user['profile_pic_url_hd'],
         'id': user['id'],
         'fb_page': user['connected_fb_page'],
@@ -43,20 +45,21 @@ def get_single_page(username, max_id=None):
 def parse_single_page(html_source):
     profile_info = parser.get_profile_json(html_source)
     user = _get_user(profile_info)
-    return user['media']
+    return user['edge_owner_to_timeline_media']
 
 
 def _get_single_entries_list(nodes):
     result = []
     for node in nodes:
-        if not node['is_video']:
+        n = node['node']
+        if not n['is_video']:
             result.append({
-                'code': node['code'],
-                'thumbnail': node['thumbnail_src'],
-                'pic': node['display_src'],
-                'date': node['date'],
-                'id': node['id'],
-                'caption': node.get('caption', '')
+                # 'code': n['code'],
+                'thumbnail': n['thumbnail_src'],
+                'pic': n['display_url'],
+                # 'date': n['date'],
+                'id': n['id'],
+                'caption': n.get('caption', '')
             })
     return result
 
@@ -67,7 +70,7 @@ def get_images(nodes, username):
 
     n = 0
     for entry in entries:
-        result = dl_image(entry['pic'], username, current_date, entry['date'])
+        result = dl_image(entry['pic'], username, current_date, uuid.uuid4().hex)
         if not result['success']:
             print('error DLing file')
         n += 1
@@ -87,7 +90,7 @@ def dl_image(url, username, date, timestamp):
                     dirpath,
                     resources.filename_template.format(
                         username=username,
-                        date=_get_date_string_from_timestamp(timestamp),
+                        date='',
                         timestamp=timestamp
                     )
             )

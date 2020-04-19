@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <style>
+            table {
+                font-family: arial, sans-serif;
+                border-collapse: collapse;
+                width: 100%;
+            }
+
+            th {
+                border: 1px solid #dddddd;
+                text-align: left;
+                padding: 8px;
+            }
+
+            td {
+                border: 1px solid #dddddd;
+                text-align: left;
+                padding: 8px;
+            }
+
+            tr:nth-child(even) {
+                background-color: #dddddd;
+            }
+        </style>
+        <meta charset="UTF-8">
+        <title>Instagrab</title>
+        <link rel="icon" type="image/png" href="/static/img/favicon.png">
+        <link rel="stylesheet"
+              href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    </head>
+    <body>
+
+        <form action="/" method="post" name="submit_form">
+            <label for="link">Link:</label>
+            <input type="text" id="link" name="text"><br><br>
+            <input type="submit" value="Submit">
+        </form>
+
+    </body>
+</html>

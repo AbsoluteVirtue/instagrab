@@ -12,7 +12,13 @@ def get_profile_json(html_source):
     content = soup.find(type='text/javascript', string=re.compile('window._sharedData'))
     # TODO: check for content and handle exception to skip the pic and advance to next
     shared_data = content.string.strip().replace('window._sharedData = ', '')[:-1]
-    return json.loads(shared_data)
+    result = {}
+    try:
+        result = json.loads(shared_data)
+    except Exception:
+        pass
+
+    return result
 
 
 def get_pic_json(html_source):

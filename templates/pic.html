@@ -1,0 +1,12 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>{{ data['id'] }}</title>
+</head>
+    <body>
+        {% for url in data['children'] %}
+            <img src="{{ url }}" alt="{{ data['user'] }}" />
+        {% endfor %}
+    </body>
+</html>

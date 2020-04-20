@@ -8,11 +8,35 @@ import utils
 from . import Base
 
 
-class Input(Base):
+class Main(Base):
+
+    async def _get_img_links(self, url):
+        source = await utils.get_single_page(self.request.app['http'], url)
+        results = utils.parse_main_page(source)
+        if not results:
+            self.request.app['logger'].error('Profile not found')
+            return None
+
+        if results['is_private']:
+            self.request.app['logger'].error('Profile is private')
+            return None
+
+        return results['media']
 
     async def get(self):
+        username = self.request.match_info['name']
 
-        response = aiohttp_jinja2.render_template('home.html', self.request, context={})
+        media = await self._get_img_links(base_insta_url % username)
+
+        children = [edge['node']['display_url'] for edge in media['edges']]
+
+        response = aiohttp_jinja2.render_template('pic.html', self.request, context={
+            'data': {
+                'children': children,
+                'user': username,
+                'id': '---',
+            },
+        })
         return response
 
     async def post(self):
@@ -22,17 +46,7 @@ class Input(Base):
             for username in links:
                 url = base_insta_url % username
 
-                source = await utils.get_single_page(self.request.app['http'], url)
-                results = utils.parse_main_page(source)
-                if not results:
-                    self.request.app['logger'].error('Profile not found')
-                    continue
-
-                if results['is_private']:
-                    self.request.app['logger'].error('Profile is private')
-                    continue
-
-                media = results['media']
+                media = await self._get_img_links(url)
 
                 self.request.app['logger'].info('Downloading images...')
                 count = 0
@@ -59,7 +73,7 @@ class Input(Base):
         raise aiohttp.web.HTTPFound(location=location)
 
 
-class Single(Base):
+class SinglePost(Base):
 
     async def get(self):
         _id = self.request.match_info['id']
@@ -67,13 +81,15 @@ class Single(Base):
 
         source = await utils.get_single_page(self.request.app['http'], url)
         results = utils.parse_pic_page(source)
-        if results.get('children'):
-            for child in results['children']:
-                img_res = await utils.dl_image(self.request.app['http'],
-                                               child['media'], child['id'], results['user'], _id)
-        else:
-            img_res = await utils.dl_image(self.request.app['http'],
-                                           results['media'], results['id'], results['user'], _id)
 
-        location = self.request.app.router['home'].url_for()
-        raise aiohttp.web.HTTPFound(location=location)
+        children = [results['media']]
+        children.extend([child['media'] for child in results.get('children', [])])
+
+        response = aiohttp_jinja2.render_template('pic.html', self.request, context={
+            'data': {
+                'children': children,
+                'user': results['user'],
+                'id': _id,
+            }
+        })
+        return response

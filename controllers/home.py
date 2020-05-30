@@ -24,7 +24,10 @@ class Main(Base):
         return results['media']
 
     async def get(self):
-        username = self.request.match_info['name']
+        try:
+            username = self.request.match_info['name']
+        except Exception:
+            return None
 
         media = await self._get_img_links(base_insta_url % username)
 

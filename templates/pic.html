@@ -5,6 +5,7 @@
     <title>{{ data['id'] }}</title>
 </head>
     <body>
+        <p>{{ data['user'] }}</p><br>
         {% for url in data['children'] %}
             <img src="{{ url }}" alt="{{ data['user'] }}" />
         {% endfor %}

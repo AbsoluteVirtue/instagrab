@@ -8,6 +8,12 @@ import utils
 from . import Base
 
 
+class Index(Base):
+
+    async def get(self):
+        raise aiohttp.web.HTTPError
+
+
 class Main(Base):
 
     async def _get_img_links(self, url):
@@ -27,7 +33,7 @@ class Main(Base):
         try:
             username = self.request.match_info['name']
         except Exception:
-            return None
+            raise aiohttp.web.HTTPUnauthorized
 
         media = await self._get_img_links(base_insta_url % username)
 

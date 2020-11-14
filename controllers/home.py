@@ -11,7 +11,17 @@ from . import Base
 class Index(Base):
 
     async def get(self):
-        raise aiohttp.web.HTTPError
+        response = aiohttp_jinja2.render_template('home.html', self.request,
+                                                  context={'img': self.request.rel_url.query.get('img')})
+        return response
+
+    async def post(self):
+        body = await self.request.post()
+
+        source = await utils.get_single_page(self.request.app['http'], pic_insta_url % body['text'])
+        url = utils.parse_pic_single(source)
+
+        raise aiohttp.web.HTTPFound(self.request.app.router['home'].url_for().with_query({'img': url}))
 
 
 class Main(Base):

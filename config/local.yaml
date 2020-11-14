@@ -1,4 +1,6 @@
-debug: true
+debug: false
 
 host: 127.0.0.1
 port: 6248
+
+parser: html5lib

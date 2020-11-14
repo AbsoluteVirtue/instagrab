@@ -44,6 +44,11 @@ def parse_pic_page(html_source):
     return data
 
 
+def parse_pic_single(html_source):
+    pic_url = dom_parser.get_pic_url(html_source)
+    return pic_url
+
+
 async def get_single_page(session, url):
     response = await session.get(url=url)
     content = await response.text()

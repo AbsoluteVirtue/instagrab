@@ -11,6 +11,7 @@ pyyaml = "*"
 aiohttp-jinja2 = "*"
 bs4 = "*"
 lxml = "*"
+html5lib = "*"
 
 [requires]
 python_version = "3.8"

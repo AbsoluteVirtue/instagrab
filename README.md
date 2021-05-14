@@ -1,2 +1,2 @@
 # instagrab
-future ReactJS project
+future VueJS project
